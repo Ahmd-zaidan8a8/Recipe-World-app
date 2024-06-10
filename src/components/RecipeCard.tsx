@@ -8,7 +8,7 @@ interface Props {
 const RecipeCard = ({ recipe }: Props) => {
   return (
     <Card borderRadius="10px" overflow="hidden">
-      <Image src={recipe.image} height="70%" width="100%"/>
+      <Image src={recipe.image} width="100%"/>
       <CardBody>
         <Heading mb={3} fontSize="2xl">
           {recipe.title}

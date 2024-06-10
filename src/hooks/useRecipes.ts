@@ -22,7 +22,6 @@ const useRecipes = () => {
     apiClient
       .get<FetchRecipesResponse>("/recipes" , {signal: controller.signal})
       .then((res) => {
-        console.log(res.data)
         setRecipes(res.data.results)
       })
       .catch((err) => {
