@@ -1,12 +1,10 @@
 import { Grid, GridItem, Show } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import RecipeGrid from "../components/RecipeGrid";
-// import SimpleSidebar from "../components/SimpleSidebar";
 
 const HomePage = () => {
   return (
     <>
-      {/* <SimpleSidebar> */}
       <Grid
         templateAreas={{
           base: `"nav" "main"`,
@@ -23,7 +21,6 @@ const HomePage = () => {
           <RecipeGrid />
         </GridItem>
       </Grid>
-      {/* </SimpleSidebar> */}
     </>
   );
 };
