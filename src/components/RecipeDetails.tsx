@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
 const RecipeDetails = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState<Recipe>();
+
   const [rating, setRating] = useState(0);
   const navigate = useNavigate();
 
@@ -75,56 +76,55 @@ const RecipeDetails = () => {
   };
 
   return (
-    <div>
-      <Box>
-        <Card borderRadius="10px" overflow="hidden">
-          <Flex gap="4">
+    <Box>
+      <Card borderRadius="10px" overflow="hidden">
+        <Flex gap="4">
           <Box>
-              <CardBody>
-                <Heading mb={3} fontSize="3xl">
-                  {recipe?.title}
+            <CardBody>
+              <Heading mb={3} fontSize="3xl">
+                {recipe?.title}
+              </Heading>
+              <Text>Category: {recipe?.category}</Text>
+              <Text mb={4}>{recipe?.description}</Text>
+              <UnorderedList>
+                <Heading as="h2" my={2}>
+                  Ingredients
                 </Heading>
-                <Text>Category: {recipe?.category}</Text>
-                <Text mb={4}>{recipe?.description}</Text>
-                <UnorderedList>
-                  <Heading as="h2" my={2} >Ingredients</Heading>
-                  {recipe?.ingridients.map((ing, i) => (
-                    <ListItem key={i}>{ing}</ListItem>
-                  ))}
-                </UnorderedList>
-                <OrderedList>
-                  <Heading as="h2" my={2}>Instructions</Heading>
-                  {recipe?.instructions.map((instruction, i) => (
-                    <ListItem key={i}>{instruction}</ListItem>
-                  ))}
-                </OrderedList>
-              </CardBody>
-              <CardFooter>
-                <Text>Author: {recipe?.author}</Text>
-              </CardFooter>
-              <StarRating rating={rating} setRating={saveRating} />
-              <Flex mt={4}>
-                <Button colorScheme="yellow" size="sm" m="2">
-                  <Link to={"/recipes/" + id + "/edit"}>Edit recipe</Link>
-                </Button>
-                <Button
-                  colorScheme="red"
-                  size="sm"
-                  onClick={handleDelete}
-                  m="2"
-                >
-                  Delete
-                </Button>
-              </Flex>
-            </Box>
-            <Box w="700px">
-              <Image borderRadius={20} src={recipe?.image} />
-            </Box>
-            
-          </Flex>
-        </Card>
-      </Box>
-    </div>
+                {recipe?.ingridients.map((ing, i) => (
+                  <ListItem key={i}>{ing}</ListItem>
+                ))}
+              </UnorderedList>
+              <OrderedList>
+                <Heading as="h2" my={2}>
+                  Instructions
+                </Heading>
+                {recipe?.instructions.map((instruction, i) => (
+                  <ListItem key={i}>{instruction}</ListItem>
+                ))}
+              </OrderedList>
+            </CardBody>
+            <CardFooter>
+              <Text>Author: {recipe?.author}</Text>
+            </CardFooter>
+            <StarRating rating={rating} setRating={saveRating} />
+            <Flex mt={4}>
+              <Button colorScheme="yellow" size="sm" m="2">
+                <Link to={"/recipes/" + id + "/edit"}>Edit recipe</Link>
+              </Button>
+              <Button colorScheme="red" size="sm" onClick={handleDelete} m="2">
+                Delete
+              </Button>
+              <Button colorScheme="gray" size="sm" m="2">
+                <Link to="/">Go Back to Homepage</Link>
+              </Button>
+            </Flex>
+          </Box>
+          <Box w="700px">
+            <Image borderRadius={20} src={recipe?.image} />
+          </Box>
+        </Flex>
+      </Card>
+    </Box>
   );
 };
 
