@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { FormControl, FormLabel, Input, Box, Button } from "@chakra-ui/react";
 import { FieldValues, useForm } from "react-hook-form";
-import apiCleint from "../services/api-cleint";
+import apiClient from "../services/api-client";
 import { AxiosError } from "axios";
 import { Text } from "@chakra-ui/react";
 import AuthContext from "../contexts/authContext";
@@ -13,12 +13,12 @@ const LoginForm = () => {
   };
   
   const [error, setError] = useState("");
-  const { setIsLoggedIn } = useContext(AuthContext);
+  // const { setIsLoggedIn } = useContext(AuthContext);
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data: FieldValues) => {
-    apiCleint
-      .post("/auth", data)
+    apiClient
+      .post("auth", data)
       .then((res) => {
         storeToken(res.data);
         //setIsLoggedIn(true);
@@ -39,9 +39,7 @@ const LoginForm = () => {
 
   return (
     <form
-      onSubmit={handleSubmit((data) => {
-        onSubmit(data);
-      })}
+      onSubmit={handleSubmit((data) => onSubmit(data))}
     >
       <FormControl>
         <Box mb="3">

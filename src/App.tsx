@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
-import Login from "./pages/Login";
 import AuthContext from "./contexts/authContext";
+import {  useNavigate } from "react-router-dom";
+import Login from "./pages/Login";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    }
+  });
+  
   return (
     <>
       <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>

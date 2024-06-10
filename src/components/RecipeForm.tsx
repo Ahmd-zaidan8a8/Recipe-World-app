@@ -7,56 +7,128 @@ import {
   Heading,
   Input,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { Textarea } from "@chakra-ui/react";
-import apiCleint from "../services/api-cleint";
+import apiClient from "../services/api-client";
 import { FieldValues, useForm } from "react-hook-form";
 import { Radio, RadioGroup } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { linesArray } from "../services/lines-array";
 import UploadImage from "./UploadImage";
+import { useNavigate } from "react-router-dom";
 
-const RecipeForm = () => {
-  const [category, setCategory] = useState("Breakfast");
-  const [selectedImage , setSelectedImage] = useState("");
+import Recipe from "../interfaces/Recipe";
 
+interface RecipeFormProps {
+  recipe?: Recipe;
+}
+
+const RecipeForm : React.FC<RecipeFormProps> = ({recipe}) => {
+
+  const isEditing = !!recipe;
+  const defaultValues = getDefaultValues(recipe);
+  const navigate = useNavigate();
+  
+  console.log(defaultValues);
+
+  const [category, setCategory] = useState(defaultValues.category);
+  // const [selectedImage , setSelectedImage] = useState(defaultValues.image);
+  const [error, setError] = useState("");
   const {
     register,
     handleSubmit,
+    reset,
     // formState: { errors },
   } = useForm();
 
-// TODO: the author hardcoded:
+  function getDefaultValues (recipe?: Recipe) {
+
+    let defaultValues = {
+      title: '',
+      description: '',
+      instructions: '',
+      ingridients: '',
+      category: "Breakfast",
+      image: '',
+    };
+
+    if (recipe) {
+      defaultValues = {
+        ...defaultValues,
+        category: recipe.category,
+        description: recipe.description,
+        instructions: recipe.instructions.join('\n'),
+        ingridients: recipe.ingridients.join('\n'),
+        image: recipe.image,
+        title: recipe.title,
+      };
+    }
+
+    console.log("defaults");
+
+    return defaultValues;
+  }
+
+  // reset default values when props change
+  useEffect(() => {
+    reset();
+  }, [recipe]);
+
   const onSubmit = (data: FieldValues) => {
     const newRecipe = {
       ...data,
       ingridients: linesArray(data.ingridients),
       instructions: linesArray(data.instructions),
-      image: selectedImage,
-      category: category,
-      author: "665c3e09a9406bbd9aec35c0"
+      // image: selectedImage,
+      category: category
     };
-    apiCleint
-      .post("/recipes", newRecipe, {headers: {"x-auth-token" : localStorage.getItem("authToken")}})
+
+    const createOrUpdate = isEditing ? apiClient.put : apiClient.post;
+    const endpoint = isEditing ? `/recipes/${recipe._id}` : "/recipes";
+  
+    createOrUpdate(endpoint, newRecipe, {headers: {"x-auth-token" : localStorage.getItem("authToken")}})
       .then((res) => {
         console.log(res);
+        navigate(`/recipes/${res.data._id}`);
       })
-      .catch((err: AxiosError) => console.log(err.response?.data));
+      .catch(onError);      
+  };
+
+
+  const onError = (err: AxiosError) => {
+    console.error(err);
+
+    if (err.response?.data) {
+      setError(
+        typeof err.response.data === "string"
+          ? err.response.data
+          : JSON.stringify(err.response.data)
+      );
+    } else {
+      setError("An unknown error occurred");
+    }
   };
 
   return (
     <>
-      <UploadImage setSelectedImage={setSelectedImage} />
+      {/* {!isEditing && <UploadImage setSelectedImage={setSelectedImage} />} */}
+
       <form
         onSubmit={handleSubmit((data) => {
           onSubmit(data);
         })}
       >
         <FormControl>
+        <Box my="3">
+            <FormLabel htmlFor="Image">Image</FormLabel>
+            <Input {...register("image", {value: defaultValues.image})} id="image" type="url" size="sm" />
+            {/* {errors.name && <Text color="tomato">{errors.name.message}</Text>} */}
+          </Box>
           <Box my="3">
             <FormLabel htmlFor="title">Title</FormLabel>
-            <Input {...register("title")} id="title" type="text" size="sm" />
+            <Input {...register("title", {value: defaultValues.title})} id="title" type="text" size="sm" />
             {/* {errors.name && <Text color="tomato">{errors.name.message}</Text>} */}
           </Box>
           <Box mb="3">
@@ -76,13 +148,13 @@ const RecipeForm = () => {
           </Box>
           <Box mb="3">
             <FormLabel htmlFor="description">description</FormLabel>
-            <Input {...register("description")} id="description" type="text" />
+            <Input {...register("description", {value: defaultValues.description})} id="description" type="text" />
             {/* {errors.email && <Text color="tomato">{errors.email.message}</Text>} */}
           </Box>
           <Box mb="3">
-            <FormLabel htmlFor="ingridients">ingridients</FormLabel>
+            <FormLabel htmlFor="ingridients">ingredients</FormLabel>
             <Textarea
-              {...register("ingridients")}
+              {...register("ingridients", {value: defaultValues.ingridients})}
               id="ingridients"
               placeholder="please Enter each ingridient in seperate line."
             />
@@ -93,7 +165,7 @@ const RecipeForm = () => {
           <Box mb="3">
             <FormLabel htmlFor="instructions">instructions</FormLabel>
             <Textarea
-              {...register("instructions")}
+              {...register("instructions", {value: defaultValues.instructions})}
               id="instructions"
               placeholder="please Enter each instruction in seperate line."
             />
@@ -102,8 +174,9 @@ const RecipeForm = () => {
                   )} */}
           </Box>
           <Button mt={4} type="submit" colorScheme="teal">
-            Create
+            {isEditing ? "Edit" : "Create"}
           </Button>
+          {error && <Text color="tomato">{error}</Text>}
         </FormControl>
       </form>
     </>
@@ -111,3 +184,4 @@ const RecipeForm = () => {
 };
 
 export default RecipeForm;
+ 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import apiCleint from "../services/api-cleint";
+import apiClient from "../services/api-client";
 import { CanceledError } from "axios";
 
 export interface Recipe {
@@ -19,8 +19,8 @@ const useRecipes = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    apiCleint
-      .get<FetchRecipesResponse>("/recipes" , {signal: controller.signal})
+    apiClient
+      .get<FetchRecipesResponse>("recipes" , {signal: controller.signal})
       .then((res) => {
         console.log(res.data)
         setRecipes(res.data.results)

@@ -1,11 +1,13 @@
 import { FormControl, FormLabel, Input, Box, Button } from "@chakra-ui/react";
 import { FieldValues, useForm } from "react-hook-form";
-import apiCleint from "../services/api-cleint";
+import apiClient from "../services/api-client";
 import { AxiosError } from "axios";
 import { Text } from "@chakra-ui/react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 
 const passwordComplexitySchema = z
   .string()
@@ -35,8 +37,9 @@ const schema = z.object({
 // // extract a type from the schema object
 type FormData = z.infer<typeof schema>;
 
-const ResgisterForm = () => {
+const RegisterForm = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState("");
   const {
     register,
     handleSubmit,
@@ -44,20 +47,32 @@ const ResgisterForm = () => {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit = (data: FieldValues) => {
-    apiCleint
-      .post("/users", data)
+    apiClient
+      .post("users", data)
       .then((res) => {
         console.log(res);
         navigate('/login');
       })
-      .catch((err: AxiosError) => console.log(err.response?.data));
+      .catch(onError);
+  };
+
+  const onError = (err: AxiosError) => {
+    console.error(err);
+
+    if (err.response?.data) {
+      setError(
+        typeof err.response.data === "string"
+          ? err.response.data
+          : JSON.stringify(err.response.data)
+      );
+    } else {
+      setError("An unknown error occurred");
+    }
   };
 
   return (
     <form
-      onSubmit={handleSubmit((data) => {
-        onSubmit(data);
-      })}
+      onSubmit={handleSubmit((data) => onSubmit(data))}
     >
       <FormControl>
         <Box mb="3">
@@ -80,9 +95,10 @@ const ResgisterForm = () => {
         <Button mt={4} type="submit" colorScheme="teal">
           Resgister
         </Button>
+        {error && <Text color="tomato">{error}</Text>}
       </FormControl>
     </form>
   );
 };
 
-export default ResgisterForm;
+export default RegisterForm;
