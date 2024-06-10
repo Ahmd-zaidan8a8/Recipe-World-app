@@ -25,16 +25,16 @@ interface RecipeFormProps {
   recipe?: Recipe;
 }
 
-const RecipeForm : React.FC<RecipeFormProps> = ({recipe}) => {
-
+const RecipeForm: React.FC<RecipeFormProps> = ({ recipe }) => {
   const isEditing = !!recipe;
   const defaultValues = getDefaultValues(recipe);
   const navigate = useNavigate();
-  
-  console.log(defaultValues);
+
+  // console.log(defaultValues);
 
   const [category, setCategory] = useState(defaultValues.category);
   // const [selectedImage , setSelectedImage] = useState(defaultValues.image);
+  const [selectedImage, setSelectedImage] = useState("");
   const [error, setError] = useState("");
   const {
     register,
@@ -43,15 +43,14 @@ const RecipeForm : React.FC<RecipeFormProps> = ({recipe}) => {
     // formState: { errors },
   } = useForm();
 
-  function getDefaultValues (recipe?: Recipe) {
-
+  function getDefaultValues(recipe?: Recipe) {
     let defaultValues = {
-      title: '',
-      description: '',
-      instructions: '',
-      ingridients: '',
+      title: "",
+      description: "",
+      instructions: "",
+      ingridients: "",
       category: "Breakfast",
-      image: '',
+      image: "",
     };
 
     if (recipe) {
@@ -59,14 +58,14 @@ const RecipeForm : React.FC<RecipeFormProps> = ({recipe}) => {
         ...defaultValues,
         category: recipe.category,
         description: recipe.description,
-        instructions: recipe.instructions.join('\n'),
-        ingridients: recipe.ingridients.join('\n'),
+        instructions: recipe.instructions.join("\n"),
+        ingridients: recipe.ingridients.join("\n"),
         image: recipe.image,
         title: recipe.title,
       };
     }
 
-    console.log("defaults");
+    // console.log("defaults");
 
     return defaultValues;
   }
@@ -82,20 +81,21 @@ const RecipeForm : React.FC<RecipeFormProps> = ({recipe}) => {
       ingridients: linesArray(data.ingridients),
       instructions: linesArray(data.instructions),
       // image: selectedImage,
-      category: category
+      category: category,
     };
 
     const createOrUpdate = isEditing ? apiClient.put : apiClient.post;
     const endpoint = isEditing ? `/recipes/${recipe._id}` : "/recipes";
-  
-    createOrUpdate(endpoint, newRecipe, {headers: {"x-auth-token" : localStorage.getItem("authToken")}})
+
+    createOrUpdate(endpoint, newRecipe, {
+      headers: { "x-auth-token": localStorage.getItem("authToken") },
+    })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         navigate(`/recipes/${res.data._id}`);
       })
-      .catch(onError);      
+      .catch(onError);
   };
-
 
   const onError = (err: AxiosError) => {
     console.error(err);
@@ -113,6 +113,12 @@ const RecipeForm : React.FC<RecipeFormProps> = ({recipe}) => {
 
   return (
     <>
+      <Box my="3">
+        <UploadImage setSelectedImage={setSelectedImage} />
+        {/* <FormLabel htmlFor="Image">Image</FormLabel>
+            <Input {...register("image", {value: defaultValues.image})} id="image" type="url" size="sm" /> */}
+        {/* {errors.name && <Text color="tomato">{errors.name.message}</Text>} */}
+      </Box>
       {/* {!isEditing && <UploadImage setSelectedImage={setSelectedImage} />} */}
 
       <form
@@ -121,14 +127,14 @@ const RecipeForm : React.FC<RecipeFormProps> = ({recipe}) => {
         })}
       >
         <FormControl>
-        <Box my="3">
-            <FormLabel htmlFor="Image">Image</FormLabel>
-            <Input {...register("image", {value: defaultValues.image})} id="image" type="url" size="sm" />
-            {/* {errors.name && <Text color="tomato">{errors.name.message}</Text>} */}
-          </Box>
           <Box my="3">
             <FormLabel htmlFor="title">Title</FormLabel>
-            <Input {...register("title", {value: defaultValues.title})} id="title" type="text" size="sm" />
+            <Input
+              {...register("title", { value: defaultValues.title })}
+              id="title"
+              type="text"
+              size="sm"
+            />
             {/* {errors.name && <Text color="tomato">{errors.name.message}</Text>} */}
           </Box>
           <Box mb="3">
@@ -148,13 +154,17 @@ const RecipeForm : React.FC<RecipeFormProps> = ({recipe}) => {
           </Box>
           <Box mb="3">
             <FormLabel htmlFor="description">description</FormLabel>
-            <Input {...register("description", {value: defaultValues.description})} id="description" type="text" />
+            <Input
+              {...register("description", { value: defaultValues.description })}
+              id="description"
+              type="text"
+            />
             {/* {errors.email && <Text color="tomato">{errors.email.message}</Text>} */}
           </Box>
           <Box mb="3">
             <FormLabel htmlFor="ingridients">ingredients</FormLabel>
             <Textarea
-              {...register("ingridients", {value: defaultValues.ingridients})}
+              {...register("ingridients", { value: defaultValues.ingridients })}
               id="ingridients"
               placeholder="please Enter each ingridient in seperate line."
             />
@@ -165,7 +175,9 @@ const RecipeForm : React.FC<RecipeFormProps> = ({recipe}) => {
           <Box mb="3">
             <FormLabel htmlFor="instructions">instructions</FormLabel>
             <Textarea
-              {...register("instructions", {value: defaultValues.instructions})}
+              {...register("instructions", {
+                value: defaultValues.instructions,
+              })}
               id="instructions"
               placeholder="please Enter each instruction in seperate line."
             />
@@ -184,4 +196,3 @@ const RecipeForm : React.FC<RecipeFormProps> = ({recipe}) => {
 };
 
 export default RecipeForm;
- 
