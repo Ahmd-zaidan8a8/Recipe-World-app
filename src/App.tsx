@@ -4,14 +4,14 @@ import Login from "./pages/Login";
 import AuthContext from "./contexts/authContext";
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   return (
     <>
-    <AuthContext.Provider value={{isLoggedIn , setIsLoggedIn}}>
-      {isLoggedIn && <HomePage />}
+      <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+        {isLoggedIn && <HomePage />}
 
-      {!isLoggedIn && <Login />}
+        {!isLoggedIn && <Login />}
       </AuthContext.Provider>
     </>
   );

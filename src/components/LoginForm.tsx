@@ -21,10 +21,10 @@ const LoginForm = () => {
       .post("/auth", data)
       .then((res) => {
         storeToken(res.data);
-        setIsLoggedIn(true);
+        //setIsLoggedIn(true);
       })
       .catch((err: AxiosError) => {
-        console.log(err.response?.data);
+        console.log(err);
         if (err.response?.data) {
           setError(
             typeof err.response.data === "string"
