@@ -10,7 +10,6 @@ import {
   UnorderedList,
   Button,
   Box,
-  flexbox,
   Flex,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";

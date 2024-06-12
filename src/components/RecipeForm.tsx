@@ -30,7 +30,6 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ recipe }) => {
   const defaultValues = getDefaultValues(recipe);
   const navigate = useNavigate();
 
-  // console.log(defaultValues);
 
   const [category, setCategory] = useState(defaultValues.category);
   // const [selectedImage , setSelectedImage] = useState(defaultValues.image);
@@ -80,7 +79,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ recipe }) => {
       ...data,
       ingridients: linesArray(data.ingridients),
       instructions: linesArray(data.instructions),
-      // image: selectedImage,
+      image: selectedImage,
       category: category,
     };
 
@@ -112,7 +111,14 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ recipe }) => {
   };
 
   return (
-    <>
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      height="100vh"
+    >
+      <Heading >Enter your recipe details.</Heading>
       <Box my="3">
         <UploadImage setSelectedImage={setSelectedImage} />
         {/* <FormLabel htmlFor="Image">Image</FormLabel>
@@ -169,8 +175,8 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ recipe }) => {
               placeholder="please Enter each ingridient in seperate line."
             />
             {/* {errors.password && (
-                    <Text color="tomato">{errors.password.message}</Text>
-                  )} */}
+                      <Text color="tomato">{errors.password.message}</Text>
+                    )} */}
           </Box>
           <Box mb="3">
             <FormLabel htmlFor="instructions">instructions</FormLabel>
@@ -182,8 +188,8 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ recipe }) => {
               placeholder="please Enter each instruction in seperate line."
             />
             {/* {errors.password && (
-                    <Text color="tomato">{errors.password.message}</Text>
-                  )} */}
+                      <Text color="tomato">{errors.password.message}</Text>
+                    )} */}
           </Box>
           <Button mt={4} type="submit" colorScheme="teal">
             {isEditing ? "Edit" : "Create"}
@@ -191,7 +197,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ recipe }) => {
           {error && <Text color="tomato">{error}</Text>}
         </FormControl>
       </form>
-    </>
+    </Box>
   );
 };
 
