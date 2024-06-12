@@ -17,10 +17,9 @@ const LoginForm = () => {
 
   const onSubmit = (data: FieldValues) => {
     apiClient
-      .post("auth", data)
+      .post("/auth", data)
       .then((res) => {
         storeToken(res.data);
-        //setIsLoggedIn(true);
       })
       .catch((err: AxiosError) => {
         console.log(err);
