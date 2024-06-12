@@ -9,9 +9,8 @@ import AuthContext from "./contexts/authContext";
 
 function Root() {
 
-  const token = localStorage.getItem("authToken");
 
-  const [isLoggedIn, setIsLoggedIn] = useState(token != null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <AuthContext.Provider value={{isLoggedIn , setIsLoggedIn}}>
@@ -21,7 +20,7 @@ function Root() {
           <RouterProvider router={router} />
         </ChakraProvider>
       </React.StrictMode>
-    </AuthContext.Provider>
+     </AuthContext.Provider>
   );
 }
 

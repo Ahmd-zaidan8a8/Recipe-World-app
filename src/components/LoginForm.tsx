@@ -1,25 +1,30 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FormControl, FormLabel, Input, Box, Button } from "@chakra-ui/react";
 import { FieldValues, useForm } from "react-hook-form";
 import apiClient from "../services/api-client";
 import { AxiosError } from "axios";
 import { Text } from "@chakra-ui/react";
+import AuthContext from "../contexts/authContext";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
-  
   const storeToken = (token: string) => {
     localStorage.setItem("authToken", token);
   };
-  
+
   const [error, setError] = useState("");
-  // const { setIsLoggedIn } = useContext(AuthContext);
   const { register, handleSubmit } = useForm();
+  const {setIsLoggedIn} = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const onSubmit = (data: FieldValues) => {
     apiClient
       .post("/auth", data)
       .then((res) => {
         storeToken(res.data);
+        setIsLoggedIn(true);
+        navigate('/');
+        
       })
       .catch((err: AxiosError) => {
         console.log(err);
@@ -36,9 +41,7 @@ const LoginForm = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit((data) => onSubmit(data))}
-    >
+    <form onSubmit={handleSubmit((data) => onSubmit(data))}>
       <FormControl>
         <Box mb="3">
           <FormLabel htmlFor="email">Email address</FormLabel>
